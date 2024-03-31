@@ -4,25 +4,14 @@ import { Database } from "../util/database/Database"
 const router = Router()
 
 router.post("/:_id/exercises", async (req: Request, res: Response, next: NextFunction) => {
-    try{
+    try {
         console.log("entra a post /user/:_id/exercises")
         const database = await Database.getInstance()
         const _id = req.params._id
-        const {
-            description,
-            duration,
-            date
-        } = req.body
-        
-        const user = await database.userModel.findById(_id)
-        user.description = description
-        user.duration = duration
-        user.date = date || new Date().toUTCString()
-        await user.save()
-        console.log(user)
 
-        res.json(user)
-    }catch(e){
+        const response = await database.logExercise(_id, req.body)
+        res.json(response)
+    } catch (e) {
         next(e)
     }
 })

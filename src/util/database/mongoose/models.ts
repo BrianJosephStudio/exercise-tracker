@@ -1,16 +1,8 @@
-import { Mongoose } from "mongoose";
-
-const modelName = "user"
+import mongoose, { Mongoose } from "mongoose";
 const collectionName = "ercercise_tracker"
 
-export const userModel = (mongoose: Mongoose): any => {
-
-  const urlSchema = new mongoose.Schema({
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-    },
+export const getModels = (mongoose: Mongoose): any => {
+  const exerciseSchema = new mongoose.Schema({
     description: {
       type: String,
     },
@@ -20,8 +12,29 @@ export const userModel = (mongoose: Mongoose): any => {
     date: {
       type: String,
     },
+  })
+
+  const userSchema = new mongoose.Schema({
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    log: [{
+      description: {
+        type: String,
+      },
+      duration: {
+        type: Number,
+      },
+      date: {
+        type: String,
+      },
+    }]
   });
-  
-  const model = mongoose.model(modelName, urlSchema, collectionName);
-  return model
+
+  const user = mongoose.model("user", userSchema, collectionName);
+  const exercise = mongoose.model("exercise", exerciseSchema, collectionName);
+  return { user, exercise }
 }
+
