@@ -8,7 +8,10 @@ router.post("/:_id/exercises", async (req: Request, res: Response, next: NextFun
     const database = await Database.getInstance()
     const _id = req.params._id
 
-    const response = await database.logExercise(_id, req.body)
+    const exercise = database.createExercise(req.body)
+
+    const response = await database.logExercise(_id, exercise)
+    console.log(response)
     res.json(response)
   } catch (e) {
     next(e)

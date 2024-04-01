@@ -18,7 +18,6 @@ export const getModels = (mongoose: Mongoose): any => {
     username: {
       type: String,
       required: true,
-      unique: true,
     },
     log: [{
       description: {

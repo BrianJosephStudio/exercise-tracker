@@ -2,6 +2,7 @@ export interface Exercise {
     description: string
     duration: number
     date: string
+    _id?: any
 }
 
 export interface User {

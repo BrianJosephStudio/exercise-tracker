@@ -68,20 +68,42 @@ export class Database {
     return createdUser
   }
 
-  public readonly logExercise = async (userId: string, exerciseObject: Exercise): Promise<ExerciseResponse> => {
-    const userDocument = await this.userModel.findById(userId)
-    const exercise: Exercise = {
-      description: exerciseObject.description,
-      duration: exerciseObject.duration,
-      date: exerciseObject.date || new Date().toUTCString()
+  public readonly createExercise = (reqBody: any): Exercise => {
+    if (
+      !reqBody.description ||
+      !reqBody.duration ||
+      isNaN(parseInt(reqBody.duration))
+    ) {
+      throw new Error("Could not create exercise")
     }
+    if(reqBody.date && isNaN(Date.parse(reqBody.date))){
+      throw new Error("invalid date format")
+    }
+    let date = reqBody.date
+    if(reqBody.date){
+      date = new Date(date).toDateString()
+    }else{
+      date = new Date().toDateString()
+    }
+
+    return {
+      description: reqBody.description,
+      duration: parseInt(reqBody.duration),
+      date: date
+    }
+  }
+
+  public readonly logExercise = async (userId: string, exercise: Exercise): Promise<ExerciseResponse> => {
+    const userDocument = await this.userModel.findById(userId)
+    
     userDocument.log = [...(userDocument.log || []), ...[exercise]]
     userDocument.count++
 
     await userDocument.save()
-
+    console.log(exercise, typeof exercise.duration)
     return {
       username: userDocument.username,
+      _id: userDocument._id,
       ...exercise
     }
   }

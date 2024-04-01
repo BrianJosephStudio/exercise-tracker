@@ -5,9 +5,6 @@ import { Router } from "express"
 const router = Router()
 // leo
 
-router.use("/user", userRouter)
-router.get("/", (req, res) => {
-  res.send("hola")
-})
+router.use("/users", userRouter)
 
 export default router
