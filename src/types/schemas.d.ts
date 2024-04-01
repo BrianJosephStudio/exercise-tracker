@@ -6,6 +6,7 @@ export interface Exercise {
 
 export interface User {
     username: string
+    count?: number
     log?: Exercise[]
 }
 

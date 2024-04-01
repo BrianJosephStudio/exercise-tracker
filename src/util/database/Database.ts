@@ -45,7 +45,8 @@ export class Database {
 
   public readonly createUser = async (username: string) => {
     const user: User = {
-      username: username
+      username: username,
+      count: 0
     }
     const newUserDocument = this.userModel(user)
 
@@ -75,13 +76,45 @@ export class Database {
       date: exerciseObject.date || new Date().toUTCString()
     }
     userDocument.log = [...(userDocument.log || []), ...[exercise]]
-    
-    const savedUser = await userDocument.save()
+    userDocument.count++
+
+    await userDocument.save()
 
     return {
       username: userDocument.username,
       ...exercise
     }
+  }
+  public readonly getExerciseLogs = async (userId: string, from?: Date, to?: Date, limit?: number): Promise<ExerciseResponse> => {
+    const userDocument = await this.userModel.findById(userId)
+    const response = userDocument.toObject()
+    if (from) {
+      response.log = response.log.filter((exercise: Exercise) => {
+        return new Date(exercise.date) > from
+      })
+    }
+    if (to) {
+      response.log = response.log.filter((exercise: Exercise) => {
+        return new Date(exercise.date) < to
+      })
+    }
+    if (limit) {
+      while (response.log.length > limit) {
+        response.log.pop()
+      }
+    }
+    return response
+  }
+
+  public readonly validateDateQuery = (date: any): Date | undefined => {
+    if (!date) return undefined
+    if (!isNaN(Date.parse(date))) return new Date(date)
+    throw new Error("Wrong query params")
+  }
+  public readonly validateNumberQuery = (number: any): number | undefined => {
+    if (!number) return undefined
+    if (parseInt(number)) return parseInt(number)
+    throw new Error("Wrong query params")
   }
 
   public readonly removeAllDocuments = async (): Promise<void> => {

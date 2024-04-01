@@ -30,7 +30,11 @@ export const getModels = (mongoose: Mongoose): any => {
       date: {
         type: String,
       },
-    }]
+    }],
+    count: {
+      type: Number,
+      required: true
+    }
   });
 
   const user = mongoose.model("user", userSchema, collectionName);
